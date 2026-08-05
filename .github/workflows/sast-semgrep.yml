@@ -1,0 +1,36 @@
+name: Security - SAST (Semgrep)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  semgrep:
+    name: SAST - Code Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Lancer Semgrep (SAST)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/cwe-top-25
+          generateSarif: true
+
+      - name: Uploader les resultats SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+      - name: Afficher les vulnerabilites detectees
+        run: |
+          echo "✅ SAST scan completed - check 'Security' tab for details"
