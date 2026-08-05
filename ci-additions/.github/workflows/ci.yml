@@ -1,0 +1,43 @@
+name: CI - Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build & sanity check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Installer les dependances
+        run: npm ci
+
+      - name: Verifier la syntaxe de tous les fichiers JS
+        run: |
+          for f in server.js routes/*.js db/*.js; do
+            echo "Verification: $f"
+            node --check "$f"
+          done
+
+      - name: Demarrer le serveur et verifier /health
+        run: |
+          node server.js &
+          SERVER_PID=$!
+          sleep 3
+          curl -f http://localhost:3000/health || (echo "Le serveur ne repond pas" && exit 1)
+          kill $SERVER_PID
+
+      - name: Construire l'image Docker
+        run: docker build -t taskflow:ci-${{ github.sha }} .
