@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>TaskFlow</title>
+<style>
+  body { font-family: sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
+  input, button { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; }
+  .task { border: 1px solid #ddd; padding: 10px; margin: 8px 0; border-radius: 6px; }
+  #result, #searchResult { white-space: pre-wrap; background: #f5f5f5; padding: 10px; }
+</style>
+</head>
+<body>
+  <h1>TaskFlow</h1>
+
+  <h2>Connexion</h2>
+  <input id="username" placeholder="Nom d'utilisateur">
+  <input id="password" type="password" placeholder="Mot de passe">
+  <button onclick="login()">Se connecter</button>
+  <div id="result"></div>
+
+  <h2>Recherche de taches</h2>
+  <input id="searchQuery" placeholder="Rechercher...">
+  <button onclick="search()">Rechercher</button>
+  <div id="searchResult"></div>
+
+  <p><a href="task.html">Voir une tache et ses commentaires -></a></p>
+
+<script>
+async function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+  document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+}
+
+async function search() {
+  const q = document.getElementById('searchQuery').value;
+  const res = await fetch('/api/search?q=' + encodeURIComponent(q));
+  const data = await res.json();
+  document.getElementById('searchResult').textContent = JSON.stringify(data, null, 2);
+}
+</script>
+</body>
+</html>
