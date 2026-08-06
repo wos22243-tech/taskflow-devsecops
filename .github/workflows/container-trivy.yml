@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   docker-build-scan:
     name: Container - Docker Build & Scan
@@ -36,4 +40,3 @@ jobs:
       - name: Afficher les vulnerabilites detectees
         run: |
           echo "✅ Docker image scan completed"
-          echo "Node:16-slim contient plusieurs CVE connus"
