@@ -1,0 +1,39 @@
+name: Security - Container Scanning (Docker)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker-build-scan:
+    name: Container - Docker Build & Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Build l'image Docker
+        run: docker build -t taskflow:${{ github.sha }} .
+
+      - name: Lancer Trivy - scan de l'image Docker
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'taskflow:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-docker-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Uploader les resultats SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-docker-results.sarif
+          category: trivy-docker
+
+      - name: Afficher les vulnerabilites detectees
+        run: |
+          echo "✅ Docker image scan completed"
+          echo "Node:16-slim contient plusieurs CVE connus"
