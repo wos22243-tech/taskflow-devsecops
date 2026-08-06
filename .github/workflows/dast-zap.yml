@@ -40,6 +40,8 @@ jobs:
           target: 'http://localhost:3000'
           cmd_options: '-a'
           allow_issue_writing: false
+          artifact_name: 'zap-scan-results-${{ github.run_id }}'
+          fail_action: false
 
       - name: Afficher le resume
         if: always()
