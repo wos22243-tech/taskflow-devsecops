@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   trivy-scan:
     name: SCA - Dependency Scan
@@ -34,3 +38,4 @@ jobs:
       - name: Afficher les vulnerabilites detectees
         run: |
           echo "✅ Dependency scan completed"
+
