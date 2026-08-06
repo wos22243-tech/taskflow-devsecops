@@ -38,4 +38,3 @@ jobs:
       - name: Afficher les vulnerabilites detectees
         run: |
           echo "✅ Dependency scan completed"
-
