@@ -25,7 +25,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Uploader les resultats SARIF
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: trivy-results.sarif
@@ -34,4 +34,3 @@ jobs:
       - name: Afficher les vulnerabilites detectees
         run: |
           echo "✅ Dependency scan completed"
-          echo "Vulnerabilites trouvees : lodash 4.17.15, express-fileupload 1.1.6"
